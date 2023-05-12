@@ -5,27 +5,27 @@
 #Install-Module CredentialManager
 
 # Define variables
-$filename = "" #Complete with filename (ex. Raport_M365_2FA_Status.xlsx)
-$localPath = "" #Complete with local path (ex. C:\Raporty\)
+$filename   = "" #Complete with filename (ex. Raport_M365_2FA_Status.xlsx)
+$localPath  = "" #Complete with local path (ex. C:\Raporty\)
 $onlinePath = "" #Complete with path where file is on sharepoint (ex. Shared Documents/Global/)
 $cred = Get-StoredCredential -Target '' #Complete with name of stored credential in credential manager
 
 # Connect to SharePoint Online
 $pnpConnectParams = @{
-    Url = "" #Complete with Url site (ex. https://company.sharepoint.com/sites/it-dep)
-    Tenant = "" #Complete with tenant name (ex. company.onmicrosoft.com)
-    ClientId = "" #Complete with ClientId (which is ID of application registered in Azure AD)
+    Url        = "" #Complete with Url site (ex. https://company.sharepoint.com/sites/it-dep)
+    Tenant     = "" #Complete with tenant name (ex. company.onmicrosoft.com)
+    ClientId   = "" #Complete with ClientId (which is ID of application registered in Azure AD)
     Thumbprint = "" #Complete with Thumbprint (which is certificate thumbprint)
 }
 Connect-PnPOnline @pnpConnectParams
 
 # Download file from SharePoint Online to local path
 $getPnPFileParams = @{
-    Url = ($onlinePath + $filename)
-    Path = $localPath
+    Url      = ($onlinePath + $filename)
+    Path     = $localPath
     Filename = $filename
-    AsFile = $true
-    Force = $true
+    AsFile   = $true
+    Force    = $true
 }
 Get-PnPFile @getPnPFileParams
 
