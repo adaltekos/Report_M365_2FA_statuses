@@ -1,13 +1,16 @@
-#Install-Module SharePointPnPPowerShellOnline
-#Install-Module MSOnline
-#Install-Module ImportExcel
-#Install-Module CredentialManager
-
+# Install required modules
+    #Install-Module SharePointPnPPowerShellOnline
+    #Install-Module MSOnline
+    #Install-Module ImportExcel
+    #Install-Module CredentialManager
+    
+# Define variables
 $filename 		= "" #Complete with filename (ex. Raport_M365_2FA_Status.xlsx)
 $localPath 		= "" #Complete with local path (ex. C:\Raporty\)
 $onlinePath		= "" #Complete with path where file is on sharepoint (ex. Shared Documents/Global/)
 $cred = Get-StoredCredential -Target '' #Complete with name of stored credential in credential manager
 
+# Connect to SharePoint Online
 $pnpConnectParams  = @{
     Url				= "" #Complete with Url site (ex. https://company.sharepoint.com/sites/it-dep)
     Tenant			= "" #Complete with tenant name (ex. company.onmicrosoft.com)
@@ -16,6 +19,7 @@ $pnpConnectParams  = @{
 }
 Connect-PnPOnline @pnpConnectParams
 
+# Download file from SharePoint Online to local path
 $getPnPFileParams = @{
     Url				= ($onlinePath + $filename)
     Path			= $localPath
@@ -36,8 +40,14 @@ Start-Sleep -s 3
 
 #Connect and get list of all users and their status of Enable, Disable, Enforced 2FA Status
 Connect-MsolService -Credential $cred
-Get-MsolUser -all | select UserPrincipalName,DisplayName,@{N="directorySynced"; E={if ($_.ImmutableId -ne $null){"True"} else {"False"}}},@{N="Licenses"; E={if ($_.Licenses.AccountSkuId -like "DUONDystrybucja:O365_BUSINESS_PREMIUM"){"Microsoft 365 Business Standard"} elseif ($_.Licenses.AccountSkuId -like "DUONDystrybucja:O365_BUSINESS_ESSENTIALS") {"Microsoft 365 Business Basic"}}},@{N="MFA Status"; E={ if( $_.StrongAuthenticationRequirements.State -ne $null) {$_.StrongAuthenticationRequirements.State} else { "Disabled"}}} | Export-Excel -Path ($onlinePath + $filename) -WorkSheetname new -AutoSize
+Get-MsolUser -All | 
+Select-Object UserPrincipalName, DisplayName, 
+    @{N="DirectorySynced";E={If($_.ImmutableId -ne $null) {"True"} else {"False"}}},
+    @{N="Licenses";E={If($_.Licenses.AccountSkuId -like "DUONDystrybucja:O365_BUSINESS_PREMIUM") {"Microsoft 365 Business Standard"} elseif($_.Licenses.AccountSkuId -like "DUONDystrybucja:O365_BUSINESS_ESSENTIALS") {"Microsoft 365 Business Basic"}}},
+    @{N="MFA Status";E={If($_.StrongAuthenticationRequirements.State -ne $null) {$_.StrongAuthenticationRequirements.State} else {"Disabled"}}} | 
+    Export-Excel -Path ($onlinePath + $filename) -WorkSheetname "new" -AutoSize
 
+# Upload file from  local path to SharePoint Online
 $addPnPFileParams  = @{
     Folder		= $onlinePath	
     Path		= ($localPath + $filename)
