@@ -1,4 +1,4 @@
-# Report_M365_2FA_statuses
+# Report M365 2FA statuses
 ## Description
 This PowerShell script retrieves a list of all users in the Microsoft 365 tenant and their status of Enable, Disable, Enforced 2FA Status. It exports the information to an Excel file stored in SharePoint Online.
 
