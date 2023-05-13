@@ -19,4 +19,3 @@ Before running the script, you need to modify the following variables in the scr
 - `Tenant`: Complete with the tenant name (e.g. company.onmicrosoft.com)
 - `ClientId`: Complete with the ClientId (which is the ID of the application registered in Azure AD)
 - `Thumbprint`: Complete with the Thumbprint (which is the certificate thumbprint)
-- 
